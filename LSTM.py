@@ -1,5 +1,4 @@
 import time
-import matplotlib.pyplot as plt
 import numpy as np
 from numpy import newaxis
 from keras.layers.core import Dense, Activation, Dropout
@@ -40,9 +39,8 @@ def normalise_windows(window_data):
         normalised_data.append(normalised_window)
     return normalised_data
 
-def build_model():
+def build_model(layers):
     model = Sequential()
-    layers = [1, 50, 100, 1]
 
     model.add(LSTM(
         input_dim=layers[0],
@@ -64,55 +62,31 @@ def build_model():
     print "Compilation Time : ", time.time() - start
     return model
 
+def predict_point_by_point(model, data):
+    #Predict each timestep given the last sequence of true data, in effect only predicting 1 step ahead each time
+    predicted = model.predict(data)
+    predicted = np.reshape(predicted, (predicted.size,))
+    return predicted
 
-def run_network():
-    global_start_time = time.time()
-    epochs  = 1
-    seq_len = 50
+def predict_sequence_full(model, data, window_size):
+    #Shift the window by 1 new prediction each time, re-run predictions on new window
+    curr_frame = data[0]
+    predicted = []
+    for i in xrange(len(data)):
+        predicted.append(model.predict(curr_frame[newaxis,:,:])[0,0])
+        curr_frame = curr_frame[1:]
+        curr_frame = np.insert(curr_frame, [window_size-1], predicted[-1], axis=0)
+    return predicted
 
-    print 'Loading data... '
-    X_train, y_train, X_test, y_test = load_data('sp500.csv', seq_len, True)
-    print '\nData Loaded. Compiling...\n'
-
-    model = build_model()
-
-    try:
-        model.fit(
-            X_train,
-            y_train,
-            batch_size=512,
-            nb_epoch=epochs,
-            validation_split=0.05)
-
-        #Shift the window by 1 new prediction each time, re-run predictions on new window
-        curr_frame = X_test[0]
+def predict_sequences_multiple(model, data, window_size, prediction_len):
+    #Predict sequence of 50 steps before shifting prediction run forward by 50 steps
+    prediction_seqs = []
+    for i in xrange(len(data)/prediction_len):
+        curr_frame = data[i*prediction_len]
         predicted = []
-        for i in xrange(len(X_test)):
+        for j in xrange(prediction_len):
             predicted.append(model.predict(curr_frame[newaxis,:,:])[0,0])
             curr_frame = curr_frame[1:]
-            curr_frame = np.insert(curr_frame, [seq_len-1], predicted[-1], axis=0)
-        
-        '''
-        #Predict each timestep given the last sequence of true data, in effect only predicting 1 step ahead each time
-        predicted = model.predict(X_test)
-        predicted = np.reshape(predicted, (predicted.size,))
-        '''
-    except KeyboardInterrupt:
-        print 'Training duration (s) : ', time.time() - global_start_time
-        return model, y_test, 0
-
-    try:
-        fig = plt.figure(facecolor='white')
-        ax = fig.add_subplot(111)
-        ax.plot(y_test, label='True Data')
-        plt.plot(predicted, label='Prediction')
-        plt.legend()
-        plt.show()
-    except Exception as e:
-        print str(e)
-    print 'Training duration (s) : ', time.time() - global_start_time
-    
-    return model, y_test, predicted
-
-if __name__ == '__main__':
-    run_network()
+            curr_frame = np.insert(curr_frame, [window_size-1], predicted[-1], axis=0)
+        prediction_seqs.append(predicted)
+    return prediction_seqs
