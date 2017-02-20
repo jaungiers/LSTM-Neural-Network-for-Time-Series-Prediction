@@ -23,12 +23,12 @@ def load_data(filename, seq_len, normalise_window):
     result = np.array(result)
 
     row = round(0.9 * result.shape[0])
-    train = result[:row, :]
+    train = result[:int(row), :]
     np.random.shuffle(train)
     x_train = train[:, :-1]
     y_train = train[:, -1]
-    x_test = result[row:, :-1]
-    y_test = result[row:, -1]
+    x_test = result[int(row):, :-1]
+    y_test = result[int(row):, -1]
 
     x_train = np.reshape(x_train, (x_train.shape[0], x_train.shape[1], 1))
     x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))  
