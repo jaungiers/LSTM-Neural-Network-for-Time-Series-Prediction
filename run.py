@@ -16,7 +16,7 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
     ax.plot(true_data, label='True Data')
     #Pad the list of predictions to shift it in the graph to it's correct start
     for i, data in enumerate(predicted_data):
-        padding = [None for p in xrange(i * prediction_len)]
+        padding = [None for p in range(i * prediction_len)]
         plt.plot(padding + data, label='Prediction')
         plt.legend()
     plt.show()
@@ -27,11 +27,11 @@ if __name__=='__main__':
 	epochs  = 1
 	seq_len = 50
 
-	print '> Loading data... '
+	print('> Loading data... ')
 
 	X_train, y_train, X_test, y_test = lstm.load_data('sp500.csv', seq_len, True)
 
-	print '> Data Loaded. Compiling...'
+	print('> Data Loaded. Compiling...')
 
 	model = lstm.build_model([1, 50, 100, 1])
 
@@ -46,5 +46,5 @@ if __name__=='__main__':
 	#predicted = lstm.predict_sequence_full(model, X_test, seq_len)
 	#predicted = lstm.predict_point_by_point(model, X_test)        
 
-	print 'Training duration (s) : ', time.time() - global_start_time
+	print('Training duration (s) : ', time.time() - global_start_time)
 	plot_results_multiple(predictions, y_test, 50)
