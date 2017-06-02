@@ -9,7 +9,7 @@ LSTM built using the Keras Python package to predict time series steps and seque
 ## Requirements
 **Update:** As of 08-03-2017 this code has been updated from Python 2.7 to Python 3.5.
 
-This is to make it available to run natively on Windows TensorFlow installations ([Tutorial on how to install TensorFlow natively on Windows](http://www.jakob-aungiers.com/articles/a/Installing-TensorFlow-GPU-Natively%C2%A0on-Windows-10))
+This is to make it available to run natively on Windows TensorFlow installations ([Tutorial on how to install TensorFlow natively on Windows](http://www.jakob-aungiers.com/articles/a/Installing-TensorFlow-GPU-Natively-on-Windows-10))
 
 * Python 3.5
 * TensorFlow 1.0
