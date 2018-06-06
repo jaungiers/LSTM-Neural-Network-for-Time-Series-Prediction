@@ -14,10 +14,9 @@ def load_data(filename, seq_len, normalise_window):
     f = open(filename, 'rb').read()
     data = f.decode().split('\n')
 
-    sequence_length = seq_len + 1
     result = []
-    for index in range(len(data) - sequence_length):
-        result.append(data[index: index + sequence_length])
+    for index in range(len(data) - seq_len + 1):
+        result.append(data[index: index + seq_len])
     
     if normalise_window:
         result = normalise_windows(result)
