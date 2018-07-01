@@ -1,9 +1,10 @@
 import lstm
 import time
 import matplotlib.pyplot as plt
+from keras.callbacks import TensorBoard
 
 def plot_results(predicted_data, true_data):
-    fig = plt.figure(facecolor='white')
+    fig = plt.figure(facecolor='white',figsize=[15,10])
     ax = fig.add_subplot(111)
     ax.plot(true_data, label='True Data')
     plt.plot(predicted_data, label='Prediction')
@@ -11,7 +12,7 @@ def plot_results(predicted_data, true_data):
     plt.show()
 
 def plot_results_multiple(predicted_data, true_data, prediction_len):
-    fig = plt.figure(facecolor='white')
+    fig = plt.figure(facecolor='white',figsize=[15,10])
     ax = fig.add_subplot(111)
     ax.plot(true_data, label='True Data')
     #Pad the list of predictions to shift it in the graph to it's correct start
@@ -34,13 +35,13 @@ if __name__=='__main__':
 	print('> Data Loaded. Compiling...')
 
 	model = lstm.build_model([1, 50, 100, 1])
-
+    tensorboard = TensorBoard(log_dir = os.getcwd() +'\\'+"logs\\{}".format(time.time()))
 	model.fit(
 	    X_train,
 	    y_train,
 	    batch_size=512,
 	    nb_epoch=epochs,
-	    validation_split=0.05)
+	    validation_split=0.05, verbose=1, callbacks=[tensorboard])
 
 	predictions = lstm.predict_sequences_multiple(model, X_test, seq_len, 50)
 	#predicted = lstm.predict_sequence_full(model, X_test, seq_len)
@@ -48,3 +49,9 @@ if __name__=='__main__':
 
 	print('Training duration (s) : ', time.time() - global_start_time)
 	plot_results_multiple(predictions, y_test, 50)
+	
+	
+	### Single point prediction and plotting
+	predictions = predict_point_by_point(model, X_test)
+	plot_results(predictions, y_test)
+
