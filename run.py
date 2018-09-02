@@ -1,6 +1,15 @@
-import lstm
+__author__ = "Jakob Aungiers"
+__copyright__ = "Jakob Aungiers 2018"
+__version__ = "2.0.0"
+__license__ = "MIT"
+
+import os
+import json
 import time
+import math
 import matplotlib.pyplot as plt
+from core.data_processor import DataLoader
+from core.model import Model
 
 def plot_results(predicted_data, true_data):
     fig = plt.figure(facecolor='white')
@@ -21,30 +30,55 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
         plt.legend()
     plt.show()
 
-#Main Run Thread
+def main():
+	configs = json.load(open('config.json', 'r'))
+
+	data = DataLoader(
+		os.path.join('data', configs['data']['filename']),
+		configs['data']['train_test_split'],
+		configs['data']['columns']
+	)
+
+	model = Model()
+	model.build_model(configs)
+	x, y = data.get_train_data(
+		seq_len = configs['data']['sequence_length'],
+		normalise = configs['data']['normalise']
+	)
+
+	'''
+	# in-memory training
+	model.train(
+		x,
+		y,
+		epochs = configs['training']['epochs'],
+		batch_size = configs['training']['batch_size']
+	)
+	'''
+	# out-of memory generative training
+	steps_per_epoch = math.ceil((data.len_train - configs['data']['sequence_length']) / configs['training']['batch_size'])
+	model.train_generator(
+		data_gen = data.generate_train_batch(
+			seq_len = configs['data']['sequence_length'],
+			batch_size = configs['training']['batch_size'],
+			normalise = configs['data']['normalise']
+		),
+		epochs = configs['training']['epochs'],
+		batch_size = configs['training']['batch_size'],
+		steps_per_epoch = steps_per_epoch
+	)
+	
+	x_test, y_test = data.get_test_data(
+		seq_len = configs['data']['sequence_length'],
+		normalise = configs['data']['normalise']
+	)
+
+	predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'], configs['data']['sequence_length'])
+	#predictions = model.predict_sequence_full(x_test, configs['data']['sequence_length'])
+	#predictions = model.predict_point_by_point(x_test)        
+
+	plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
+	#plot_results(predictions, y_test)
+
 if __name__=='__main__':
-	global_start_time = time.time()
-	epochs  = 1
-	seq_len = 50
-
-	print('> Loading data... ')
-
-	X_train, y_train, X_test, y_test = lstm.load_data('sp500.csv', seq_len, True)
-
-	print('> Data Loaded. Compiling...')
-
-	model = lstm.build_model([1, 50, 100, 1])
-
-	model.fit(
-	    X_train,
-	    y_train,
-	    batch_size=512,
-	    nb_epoch=epochs,
-	    validation_split=0.05)
-
-	predictions = lstm.predict_sequences_multiple(model, X_test, seq_len, 50)
-	#predicted = lstm.predict_sequence_full(model, X_test, seq_len)
-	#predicted = lstm.predict_point_by_point(model, X_test)        
-
-	print('Training duration (s) : ', time.time() - global_start_time)
-	plot_results_multiple(predictions, y_test, 50)
+	main()
