@@ -16,7 +16,7 @@ class Model():
 
 	def load_model(self, filepath):
 		print('[Model] Loading model from file %s' % filepath)
-		self.model = load_model(from_file)
+		self.model = load_model(filepath)
 
 	def build_model(self, configs):
 		timer = Timer()
