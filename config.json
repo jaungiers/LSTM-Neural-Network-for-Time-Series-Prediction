@@ -16,6 +16,7 @@
 	"model": {
 		"loss": "mse",
 		"optimizer": "adam",
+		"save_dir": "saved_models",
 		"layers": [
 			{
 				"type": "lstm",

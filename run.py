@@ -32,6 +32,7 @@ def plot_results_multiple(predicted_data, true_data, prediction_len):
 
 def main():
 	configs = json.load(open('config.json', 'r'))
+	if not os.path.exists(configs['model']['save_dir']): os.makedirs(configs['model']['save_dir'])
 
 	data = DataLoader(
 		os.path.join('data', configs['data']['filename']),
@@ -52,7 +53,8 @@ def main():
 		x,
 		y,
 		epochs = configs['training']['epochs'],
-		batch_size = configs['training']['batch_size']
+		batch_size = configs['training']['batch_size'],
+		save_dir = configs['model']['save_dir']
 	)
 	'''
 	# out-of memory generative training
@@ -65,7 +67,8 @@ def main():
 		),
 		epochs = configs['training']['epochs'],
 		batch_size = configs['training']['batch_size'],
-		steps_per_epoch = steps_per_epoch
+		steps_per_epoch = steps_per_epoch,
+		save_dir = configs['model']['save_dir']
 	)
 	
 	x_test, y_test = data.get_test_data(
