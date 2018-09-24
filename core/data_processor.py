@@ -47,19 +47,20 @@ class DataLoader():
 
 	def generate_train_batch(self, seq_len, batch_size, normalise):
 		'''Yield a generator of training data from filename on given list of cols split for train/test'''
-		i = 0
-		while i < (self.len_train - seq_len):
-			x_batch = []
-			y_batch = []
-			for b in range(batch_size):
-				if i >= (self.len_train - seq_len):
-					# stop-condition for a smaller final batch if data doesn't divide evenly
-					yield np.array(x_batch), np.array(y_batch)
-				x, y = self._next_window(i, seq_len, normalise)
-				x_batch.append(x)
-				y_batch.append(y)
-				i += 1
-			yield np.array(x_batch), np.array(y_batch)
+		while True:
+			i = 0
+			while i < (self.len_train - seq_len):
+				x_batch = []
+				y_batch = []
+				for b in range(batch_size):
+					if i >= (self.len_train - seq_len):
+						# stop-condition for a smaller final batch if data doesn't divide evenly
+						yield np.array(x_batch), np.array(y_batch)
+					x, y = self._next_window(i, seq_len, normalise)
+					x_batch.append(x)
+					y_batch.append(y)
+					i += 1
+				yield np.array(x_batch), np.array(y_batch)
 
 	def _next_window(self, i, seq_len, normalise):
 		'''Generates the next data window from the given index location i'''
