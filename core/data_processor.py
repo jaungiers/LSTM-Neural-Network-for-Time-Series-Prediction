@@ -8,6 +8,7 @@ class DataLoader():
     def __init__(self, filename, split, cols):
         dataframe = pd.read_csv(filename)
         i_split = int(len(dataframe) * split)
+        print(dataframe.head(), type(dataframe), cols)
         self.data_train = dataframe.get(cols).values[:i_split]
         self.data_test  = dataframe.get(cols).values[i_split:]
         self.len_train  = len(self.data_train)
@@ -61,7 +62,7 @@ class DataLoader():
 
     def _next_window(self, i, seq_len, normalise, train=True):
         '''Generates the next data window from the given index location i'''
-        
+
         if train:
             window = self.data_train[i:i+seq_len+1]
         else:
@@ -79,7 +80,7 @@ class DataLoader():
         for window in window_data:
             normalised_window = []
             for col_i in range(window.shape[1]):
-                
+
                 normalised_col = [((float(p) / (float(window[0, col_i]) + eps) ) - 1) for p in window[:, col_i]]
                 normalised_window.append(normalised_col)
             normalised_window = np.array(normalised_window).T # reshape and transpose array back into original multidimensional format
