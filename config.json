@@ -1,6 +1,6 @@
 {
 	"data": {
-		"filename": "/Users/frag/Documents/data/cryptocurrencies/Coinbase_ETHUSD_1h.csv",
+		"filename": "data.csv",
 		"columns": [
 			"Close",
 			"Volume From"
