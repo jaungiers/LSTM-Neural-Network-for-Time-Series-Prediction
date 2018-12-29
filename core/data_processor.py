@@ -23,7 +23,7 @@ class DataLoader():
     def get_test_data(self, seq_len, normalise):
         '''
         Args:
-            seq_len: (int)
+            seq_len: (int) length of train sequences
             normalise: (bool)
         Returns:
             x: (numpy.ndarray) 
