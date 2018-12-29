@@ -7,6 +7,7 @@ from core.utils import Timer
 from keras.layers import Dense, Activation, Dropout, LSTM
 from keras.models import Sequential, load_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+from time import time
 
 class Model():
 	"""A class for building and inferencing an lstm model
@@ -94,6 +95,37 @@ class Model():
 		
 		print('[Model] Training Completed. Model saved as %s' % save_fname)
 		timer.stop()
+
+
+	def predict_point_to_sequence(self, data, window_size, prediction_len):
+		"""
+		for every timestep predict the next 
+		sequence of predicion_len potins
+
+		Args:
+                        data: (numpy.ndarray) X
+                        window_size: (int) used for training
+                        prediction_len: (int)
+		Returns:
+			predictions
+		"""
+		print('[Model] Predicting Point to Sequences...')
+		#import pdb;pdb.set_trace()
+		prediction_seqs = []
+		for i in range(200):
+			curr_frame = data[i]
+			predicted = []
+			start = time()
+			for j in range(prediction_len):
+				predicted.append(self.model.predict(curr_frame[newaxis,:,:])[0,0])
+				curr_frame = curr_frame[1:]
+				curr_frame = np.insert(curr_frame, [window_size-2], predicted[-1], axis=0)
+				print("one prediction (10 days) loop is "+str(time()-start))
+			prediction_seqs.append(predicted)
+		return prediction_seqs
+
+
+        
 
 	def predict_point_by_point(self, data):
 		#Predict each timestep given the last sequence of true data, in effect only predicting 1 step ahead each time

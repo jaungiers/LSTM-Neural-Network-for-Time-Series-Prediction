@@ -8,6 +8,7 @@ import json
 import time
 import math
 import matplotlib.pyplot as plt
+import pickle as pk
 from core.data_processor import DataLoader
 from core.model import Model
 
@@ -78,13 +79,20 @@ def main():
         seq_len=configs['data']['sequence_length'],
         normalise=configs['data']['normalise']
     )
+    #import pdb;pdb.set_trace()
+    print("[RUN] are you sure you want to overwrite predictions? y/n")
+    got = input()
+    if got == "y":
+        predictions = model.predict_point_to_sequence(x_test[:200], configs['data']['sequence_length'], 10)
 
-    predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'], configs['data']['sequence_length'])
-    # predictions = model.predict_sequence_full(x_test, configs['data']['sequence_length'])
-    # predictions = model.predict_point_by_point(x_test)
+        #predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'], configs['data']['sequence_length'])
+        # predictions = model.predict_sequence_full(x_test, configs['data']['sequence_length'])
+        # predictions = model.predict_point_by_point(x_test)
+    #import pdb;pdb.set_trace()
+        pk.dump(predictions, open("prediction.out","wb"))
 
-    plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
-    # plot_results(predictions, y_test)
+        plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
+        # plot_results(predictions, y_test)
 
 
 if __name__ == '__main__':
