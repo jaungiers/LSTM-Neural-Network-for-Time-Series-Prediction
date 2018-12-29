@@ -9,7 +9,16 @@ from keras.models import Sequential, load_model
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 class Model():
-	"""A class for an building and inferencing an lstm model"""
+	"""A class for building and inferencing an lstm model
+        
+        Usage:
+            model = Model()
+            model.build_model(configs)
+            x, y = data.get_train_data(
+                seq_len=configs['data']['sequence_length'],
+                normalise=configs['data']['normalise']
+            )
+        """
 
 	def __init__(self):
 		self.model = Sequential()
@@ -19,7 +28,7 @@ class Model():
 		self.model = load_model(filepath)
 
 	def build_model(self, configs):
-		timer = Timer()
+		timer = Timer() 
 		timer.start()
 
 		for layer in configs['model']['layers']:
