@@ -6,6 +6,12 @@ class DataLoader():
     """A class for loading and transforming data for the lstm model"""
 
     def __init__(self, filename, split, cols):
+        """
+        args:
+            filename : (str)
+            split: int between 0 and 1 to split test/train
+            cols : list(str) name of columns to take
+        """
         dataframe = pd.read_csv(filename)
         i_split = int(len(dataframe) * split)
         self.data_train = dataframe.get(cols).values[:i_split]
@@ -16,6 +22,13 @@ class DataLoader():
 
     def get_test_data(self, seq_len, normalise):
         '''
+        Args:
+            seq_len: (int)
+            normalise: (bool)
+        Returns:
+            x: (numpy.ndarray) 
+            y: (numpy.ndarray) 
+
         Create x, y test data windows
         Warning: batch method, not generative, make sure you have enough memory to
         load data, otherwise reduce size of the training split.
@@ -33,6 +46,13 @@ class DataLoader():
 
     def get_train_data(self, seq_len, normalise):
         '''
+        Args:
+            seq_len: (int)
+            normalise: (bool)
+        Returns:
+            x: (numpy.ndarray) 
+            y: (numpy.ndarray) 
+
         Create x, y train data windows
         Warning: batch method, not generative, make sure you have enough memory to
         load data, otherwise use generate_training_window() method.
@@ -46,7 +66,15 @@ class DataLoader():
         return np.array(data_x), np.array(data_y)
 
     def generate_train_batch(self, seq_len, batch_size, normalise):
-        '''Yield a generator of training data from filename on given list of cols split for train/test'''
+        '''
+        Args:
+            seq_len: (int)
+            batch_size: (int)
+            normalise: (bool)
+        Returns:
+            generator(x, y): generator(numpy.ndarray, numpy.ndarray)
+            
+        Yield a generator of training data from filename on given list of cols split for train/test'''
         i = 0
         while i < (self.len_train - seq_len):
             x_batch = []
