@@ -1,3 +1,4 @@
+# This file containes all the data and the hyperparameters.
 {
 	"data": {
 		"filename": "sp500.csv",
