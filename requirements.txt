@@ -1,5 +1,7 @@
-numpy==1.15.0
+numpy==1.17.0
 pandas==0.23.3
-tensorflow-gpu==1.10.0
-keras==2.2.2
+keras==2.2.4
 matplotlib==2.2.2
+tensorflow==1.15.2
+keras-applications==1.0.8
+keras-preprocessing==1.0.5
