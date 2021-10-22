@@ -2,6 +2,7 @@ __author__ = "Jakob Aungiers"
 __copyright__ = "Jakob Aungiers 2018"
 __version__ = "2.0.0"
 __license__ = "MIT"
+###xuxin Tan added
 
 import os
 import json
